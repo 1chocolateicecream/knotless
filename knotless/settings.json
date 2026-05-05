@@ -1,0 +1,25 @@
+{
+    "project_name": "knotless",
+    "version": "0.1.0",
+    "auto_mode": false,
+    "rules": [
+        {
+            "folder": "images",
+            "extensions": [
+                ".jpg",
+                ".png",
+                ".gif",
+                ".svg"
+            ]
+        },
+        {
+            "folder": "docs",
+            "extensions": [
+                ".pdf",
+                ".docx",
+                ".txt",
+                ".md"
+            ]
+        }
+    ]
+}
