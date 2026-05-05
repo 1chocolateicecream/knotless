@@ -36,5 +36,10 @@
                 HorizontalAlignment="Center"
                 Background="#4B0082"
                 Foreground="White"/>
+
+        <TextBlock Text="{Binding StatusMessage}"
+                HorizontalAlignment="Center"
+                FontSize="12"
+                Opacity="0.5" />
     </StackPanel>
 </Window>

@@ -8,24 +8,40 @@ public class WeaverEngine
 {
     public void StartWeaving(AppConfig config)
     {
-        string desktop = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+        string desktop = config.TargetPath;
 
-        if (string.IsNullOrEmpty(desktop) || !Directory.Exists(desktop))
+        // if we're in WSL (and we are), look for Windows Desktop
+        if (string.IsNullOrEmpty(desktop))
         {
-            // If Desktop folder is not found, try to use the current directory or home
-            desktop = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Desktop");
-            if (!Directory.Exists(desktop))
+            // check the most common WSL path
+            string mntPath = "/mnt/c/Users";
+            if (Directory.Exists(mntPath))
             {
-                desktop = Directory.GetCurrentDirectory();
-                Console.WriteLine($"[warning] desktop not found, using: {desktop}");
+                var userDirs = Directory.GetDirectories(mntPath);
+                foreach (var dir in userDirs)
+                {
+                    string potential = Path.Combine(dir, "Desktop");
+                    // Ignore system junk
+                    if (Directory.Exists(potential) && !dir.EndsWith("Public") && !dir.EndsWith("Default") && !dir.EndsWith("Default User"))
+                    {
+                        desktop = potential;
+                        break;
+                    }
+                }
             }
         }
 
+        // if we're still empty, take current project folder
+        if (string.IsNullOrEmpty(desktop))
+        {
+            desktop = Directory.GetCurrentDirectory();
+        }
+
+        Console.WriteLine($"[info] final target folder: {desktop}");
+
+        int filesMoved = 0;
         foreach (var rule in config.rules)
         {
-            // make path to target folder (e.g., desktop/images)
-            string targetdir = Path.Combine(desktop, rule.folder);
-
             foreach (var ext in rule.extensions)
             {
                 // find all files with that extension on desktop
@@ -33,6 +49,16 @@ public class WeaverEngine
 
                 foreach (var file in files)
                 {
+                    var fileInfo = new FileInfo(file);
+                    // take creation or last write date
+                    DateTime creationTime = fileInfo.LastWriteTime;
+
+                    // making a nice path: folder/year/month
+                    string year = creationTime.ToString("yyyy");
+                    string month = creationTime.ToString("MMMM").ToLower(); // 'may', 'june' and so on
+
+                    string targetdir = Path.Combine(desktop, rule.folder, year, month);
+
                     if (!Directory.Exists(targetdir))
                         Directory.CreateDirectory(targetdir);
 
@@ -43,7 +69,8 @@ public class WeaverEngine
                     try
                     {
                         File.Move(file, destination);
-                        Console.WriteLine($"[woven] {filename} -> {rule.folder}");
+                        Console.WriteLine($"[woven] {filename} -> {rule.folder}/{year}/{month}");
+                        filesMoved++;
                     }
                     catch (Exception ex)
                     {
@@ -52,5 +79,6 @@ public class WeaverEngine
                 }
             }
         }
+        Console.WriteLine($"[info] weaving complete. total files moved: {filesMoved}");
     }
 }

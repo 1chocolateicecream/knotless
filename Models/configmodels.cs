@@ -8,6 +8,7 @@ public class AppConfig
     public string project_name { get; set; } = "knotless";
     public string version { get; set; } = "0.1.0";
     public bool auto_mode { get; set; } = false;
+    public string TargetPath { get; set; } = string.Empty;
     public List<SortRule> rules { get; set; } = new();
 }
 
