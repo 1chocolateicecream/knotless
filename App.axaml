@@ -15,7 +15,7 @@
 
     <TrayIcon.Icons>
         <TrayIcons>
-            <TrayIcon Icon="/Assets/avalonia-logo.ico" ToolTipText="knotless">
+            <TrayIcon Icon="/Assets/icon.ico" ToolTipText="knotless">
                 <TrayIcon.Menu>
                     <NativeMenu>
                         <NativeMenuItem Header="show knotless" Click="OnShowClick"/>

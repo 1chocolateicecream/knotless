@@ -6,7 +6,7 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="knotless.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-        Icon="/Assets/avalonia-logo.ico"
+        Icon="/Assets/icon.ico"
         Title="knotless">
 
     <Design.DataContext>
@@ -18,7 +18,7 @@
     <StackPanel Spacing="20" HorizontalAlignment="Center" VerticalAlignment="Center">
         <TextBlock Text="knotless"
                 FontSize="32"
-                Foreground="#FF69B4"
+                Foreground="#98d4c0"
                 HorizontalAlignment="Center"/>
 
         <TextBlock Text="chaos refined into order."
@@ -26,25 +26,27 @@
                 Opacity="0.6"
                 HorizontalAlignment="Center"/>
 
-        <TextBlock Text="{Binding Greeting}"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"/>
-
         <Button Content="start weaving"
                 Command="{Binding StartWeavingCommand}"
-                Padding="10,5"
+                Padding="12,6"
                 HorizontalAlignment="Center"
-                Background="#4B0082"
-                Foreground="White"/>
+                Background="#f5e5ac"
+                Foreground="black"/>
 
         <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Center">
             <Button Content="select folder"
                     Command="{Binding SelectFolderCommand}"
-                    FontSize="12"/>
-            
+                    Padding="10,5"
+                    FontSize="12"
+                    Background="#c8ddd8"
+                    Foreground="black"/>
+
             <Button Content="{Binding LiveStatus}"
                     Command="{Binding ToggleLiveCommand}"
-                    FontSize="12"/>
+                    Padding="10,5"
+                    FontSize="12"
+                    Background="#c8ddd8"
+                    Foreground="black"/>
         </StackPanel>
 
         <TextBlock Text="{Binding StatusMessage}"
