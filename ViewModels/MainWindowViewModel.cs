@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
@@ -10,6 +10,7 @@ namespace knotless.ViewModels;
 
 public class MainWindowViewModel : ViewModelBase
 {
+    private readonly LiveWeaverService _liveService = new();
     public string Greeting => "welcome to knotless!";
 
     private string _statusMessage = "ready to weave";
@@ -18,6 +19,9 @@ public class MainWindowViewModel : ViewModelBase
         get => _statusMessage;
         set => SetProperty(ref _statusMessage, value);
     }
+
+    private bool _isLiveActive;
+    public string LiveStatus => _isLiveActive ? "live mode: active" : "live mode: off";
 
     // method that will be called by the button
     public void StartWeavingCommand()
@@ -28,6 +32,31 @@ public class MainWindowViewModel : ViewModelBase
             var engine = new WeaverEngine();
             engine.StartWeaving(config);
             StatusMessage = "weaving complete. chaos refined.";
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"error: {ex.Message.ToLower()}";
+        }
+    }
+
+    public void ToggleLiveCommand()
+    {
+        try
+        {
+            var config = ConfigLoader.Load();
+            if (!_isLiveActive)
+            {
+                _liveService.Start(config);
+                _isLiveActive = true;
+                StatusMessage = "live mode started. watching for changes...";
+            }
+            else
+            {
+                _liveService.Stop();
+                _isLiveActive = false;
+                StatusMessage = "live mode stopped.";
+            }
+            OnPropertyChanged(nameof(LiveStatus));
         }
         catch (Exception ex)
         {

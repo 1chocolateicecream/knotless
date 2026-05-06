@@ -37,6 +37,16 @@
                 Background="#4B0082"
                 Foreground="White"/>
 
+        <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Center">
+            <Button Content="select folder"
+                    Command="{Binding SelectFolderCommand}"
+                    FontSize="12"/>
+            
+            <Button Content="{Binding LiveStatus}"
+                    Command="{Binding ToggleLiveCommand}"
+                    FontSize="12"/>
+        </StackPanel>
+
         <TextBlock Text="{Binding StatusMessage}"
                 HorizontalAlignment="Center"
                 FontSize="12"
