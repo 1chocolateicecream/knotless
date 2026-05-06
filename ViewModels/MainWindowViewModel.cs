@@ -24,14 +24,18 @@ public class MainWindowViewModel : ViewModelBase
     public string LiveStatus => _isLiveActive ? "live mode: active" : "live mode: off";
 
     // method that will be called by the button
-    public void StartWeavingCommand()
+    public async Task StartWeavingCommand()
     {
         try
         {
+            StatusMessage = "weaving... please wait.";
             var config = ConfigLoader.Load();
             var engine = new WeaverEngine();
-            engine.StartWeaving(config);
-            StatusMessage = "weaving complete. chaos refined.";
+
+            // run heavy lifting in the background to keep UI responsive
+            var result = await Task.Run(() => engine.StartWeaving(config));
+
+            StatusMessage = $"chaos refined. moved: {result.moved}, swallowed: {result.deleted}.";
         }
         catch (Exception ex)
         {
@@ -66,7 +70,7 @@ public class MainWindowViewModel : ViewModelBase
 
     public async Task SelectFolderCommand() // method for the new button
     {
-        // ищем главное окно
+        // find the main window to open the dialog
         if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             var topLevel = TopLevel.GetTopLevel(desktop.MainWindow);
@@ -84,7 +88,7 @@ public class MainWindowViewModel : ViewModelBase
             {
                 var config = ConfigLoader.Load();
                 config.TargetPath = folders[0].Path.LocalPath;
-                // we could save it to settings.json right away, but for now let's just remember it
+                ConfigLoader.Save(config); // saving directly to settings.json
                 StatusMessage = $"target set to: {config.TargetPath.ToLower()}";
             }
         }

@@ -19,4 +19,12 @@ public static class ConfigLoader
         var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
         return JsonSerializer.Deserialize<AppConfig>(json, options) ?? new AppConfig();
     }
+
+    public static void Save(AppConfig config)
+    {
+        // serialize back into json, beautifully formatted
+        var options = new JsonSerializerOptions { WriteIndented = true };
+        string json = JsonSerializer.Serialize(config, options);
+        File.WriteAllText(configpath, json);
+    }
 }

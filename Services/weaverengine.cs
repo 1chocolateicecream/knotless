@@ -6,7 +6,7 @@ namespace knotless.services;
 
 public class WeaverEngine
 {
-    public void StartWeaving(AppConfig config)
+    public (int moved, int deleted) StartWeaving(AppConfig config)
     {
         string desktop = config.TargetPath;
 
@@ -40,6 +40,8 @@ public class WeaverEngine
         Console.WriteLine($"[info] final target folder: {desktop}");
 
         int filesMoved = 0;
+        int filesDeleted = 0;
+
         foreach (var rule in config.rules)
         {
             foreach (var ext in rule.extensions)
@@ -79,6 +81,37 @@ public class WeaverEngine
                 }
             }
         }
-        Console.WriteLine($"[info] weaving complete. total files moved: {filesMoved}");
+
+        // the black hole
+        if (config.black_hole != null && config.black_hole.enabled)
+        {
+            string blackHoleDir = Path.Combine(desktop, config.black_hole.folder);
+            if (Directory.Exists(blackHoleDir))
+            {
+                var allFiles = Directory.GetFiles(blackHoleDir);
+                foreach (var file in allFiles)
+                {
+                    var fileInfo = new FileInfo(file);
+                    var age = DateTime.Now - fileInfo.LastWriteTime;
+
+                    if (age.TotalHours >= config.black_hole.max_age_hours)
+                    {
+                        try
+                        {
+                            File.Delete(file);
+                            Console.WriteLine($"[black hole] swallowed {Path.GetFileName(file)}");
+                            filesDeleted++;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"[error] black hole couldn't swallow {Path.GetFileName(file)}: {ex.Message}");
+                        }
+                    }
+                }
+            }
+        }
+
+        Console.WriteLine($"[info] weaving complete. total files moved: {filesMoved}, swallowed: {filesDeleted}");
+        return (filesMoved, filesDeleted);
     }
 }

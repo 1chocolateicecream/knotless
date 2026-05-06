@@ -1,25 +1,31 @@
 {
-    "project_name": "knotless",
-    "version": "0.1.0",
-    "auto_mode": false,
-    "rules": [
-        {
-            "folder": "images",
-            "extensions": [
-                ".jpg",
-                ".png",
-                ".gif",
-                ".svg"
-            ]
-        },
-        {
-            "folder": "docs",
-            "extensions": [
-                ".pdf",
-                ".docx",
-                ".txt",
-                ".md"
-            ]
-        }
-    ]
+  "project_name": "knotless",
+  "version": "0.1.0",
+  "auto_mode": false,
+  "TargetPath": "",
+  "rules": [
+    {
+      "folder": "images",
+      "extensions": [
+        ".jpg",
+        ".png",
+        ".gif",
+        ".svg"
+      ]
+    },
+    {
+      "folder": "docs",
+      "extensions": [
+        ".pdf",
+        ".docx",
+        ".txt",
+        ".md"
+      ]
+    }
+  ],
+  "black_hole": {
+    "enabled": true,
+    "folder": "blackhole",
+    "max_age_hours": 24
+  }
 }
